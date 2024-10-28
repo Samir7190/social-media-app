@@ -6,7 +6,17 @@ const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const logIn = () => {
-    return
+    fetch('http://192.168.1.67:3000/auth/logIn', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email, password: password, }),
+    
+    })
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.log(err)) 
   }
   
   return (

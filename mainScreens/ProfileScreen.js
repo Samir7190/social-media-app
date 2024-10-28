@@ -24,7 +24,7 @@ const ProfileScreen = ({navigation}) => {
     ListHeaderComponent={() => (
       <>
       <View style={styles.container}>
-      <Image style={{borderWidth: 1, width: windowWidth, height: windowWidth / 1.5}} source={require('../backgroundimage.jpg')}/>
+      <Image style={{borderWidth: 1, width: windowWidth, height: windowWidth / 1.5}} source={require('../assets/backgroundimage.jpg')}/>
         
       
       <Image style={styles.image} source={require('../mushashi.webp')}/>

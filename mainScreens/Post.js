@@ -8,7 +8,7 @@ const Post = ({ navigation }) => {
       <Pressable onPress={() => navigation.navigate('AddPost')}>
         <Text style={styles.textinput}>Add a Post </Text>
       </Pressable>
-      <Image style={styles.image} source={require('../imageicon.png')} />
+      <Image style={styles.image} source={require('../assets/imageicon.png')} />
     </View>
   )
 }

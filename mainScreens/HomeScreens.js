@@ -15,11 +15,7 @@ const HomeScreens = ({navigation}) => {
     
     .catch(err => console.log(err)) 
   })
-  useEffect(() => {
-    fetch('http://192.168.1.67:3000/user/671ce8cf7833974f431db2b0')
-    .then(response => response.json())
-    .then(response => setAUser(response.following))
-  })
+  
   
   return (
     <SafeAreaView>

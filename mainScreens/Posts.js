@@ -54,15 +54,15 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
             decreaseLike()
           }
         }} style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-        <Image style={styles.image2} source={require('../like.png')} />
+        <Image style={styles.image2} source={require('../assets/like.png')} />
         <Text>{likeNumber}</Text>
         </Pressable>
         <Pressable onPress={() => gotoComment()} style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-        <Image style={styles.image2} source={require('../comment.png')} />
+        <Image style={styles.image2} source={require('../assets/comment.png')} />
         <Text>comment</Text>
         </Pressable>
         <Pressable style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-        <Image style={styles.image2} source={require('../share.png')} />
+        <Image style={styles.image2} source={require('../assets/share.png')} />
         <Text style={styles.text2}>
           Share</Text>
         </Pressable>

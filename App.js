@@ -17,8 +17,7 @@ import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons'
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 const App = () => {
-  
-  const [isLoggedIn, setIsLogedIn] = useState(false)
+  const [isLoggedIn, setIsLogedIn] = useState(true)
   return (
     <MyProvider>
     <NavigationContainer>

@@ -74,7 +74,7 @@ const AddPost = ({navigation}) => {
          value={text}
          onChangeText={setText}
       />
-      <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add An image</Text><Image style={styles.image} source={require('../imageicon.png')}/></Pressable>
+      <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add An image</Text><Image style={styles.image} source={require('../assets/imageicon.png')}/></Pressable>
       <Button title='Add Post' onPress={() => { 
         if(image == null) {
           createPost()
