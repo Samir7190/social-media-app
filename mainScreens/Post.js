@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, Image, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, TouchableOpacity } from 'react-native'
 import React from 'react'
 
 const Post = ({ navigation }) => {
   return (
+    <TouchableOpacity onPress={() => navigation.navigate('AddPost')}>
     <View style={styles.container}>
       <Image style={styles.image} source={require('../mushashi.webp')}/>
       <Pressable onPress={() => navigation.navigate('AddPost')}>
@@ -10,6 +11,7 @@ const Post = ({ navigation }) => {
       </Pressable>
       <Image style={styles.image} source={require('../assets/imageicon.png')} />
     </View>
+    </TouchableOpacity>
   )
 }
 const styles = StyleSheet.create({

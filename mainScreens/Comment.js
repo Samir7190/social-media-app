@@ -18,13 +18,27 @@ const Comment = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ cid: "66ffd1c76f8e16c24ec295ac", postId: `${selectedPostId}`, comment: userComment }),
+      body: JSON.stringify({ cid: "671ce9ab7833974f431db2bb", postId: `${selectedPostId}`, comment: userComment }),
     
     })
     setUserComment('')
   }
   return (
     <SafeAreaView style={styles.mainContainer}>
+        <View style={styles.addComment}>
+        <TextInput style={styles.textInput} placeholder='Write a comment' value={userComment} onChangeText={setUserComment}/>
+        <Pressable style={styles.addCommentButton}
+        onPress={() => {
+          if(userComment == '') {
+            return
+          } else{
+            addComment()
+          }
+        }}
+        >
+          <Text style={styles.commentText}>Add</Text>
+          </Pressable>
+      </View>
       <FlatList 
         data={comments}
         renderItem={({item}) => (
@@ -38,19 +52,9 @@ const Comment = () => {
           </View>
         </View>
         )}
+        ListFooterComponent={<View style={{ height: 45 }} />}
       />
-      <View style={styles.addComment}>
-        <TextInput style={styles.textInput} placeholder='Write a comment' value={userComment} onChangeText={setUserComment}/>
-        <Pressable style={styles.addCommentButton}
-        onPress={() => {
-          if(userComment == '') {
-            return
-          } else{
-            addComment()
-          }
-        }}
-        ><Text style={styles.commentText}>Add</Text></Pressable>
-      </View>
+      
     </SafeAreaView>
   )
 }
@@ -72,7 +76,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     flexWrap: 'nowrap',
-    flexShrink: 1
+    flexShrink: 1,
+    padding: 5
   },
   textInput: {
     borderWidth: 1,

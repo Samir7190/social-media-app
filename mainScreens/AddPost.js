@@ -19,6 +19,7 @@ const AddPost = ({navigation}) => {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       setImageMimeType(result.assets[0].mimeType)
+
       console.log(image)
      
     }
@@ -74,7 +75,10 @@ const AddPost = ({navigation}) => {
          value={text}
          onChangeText={setText}
       />
-      <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add An image</Text><Image style={styles.image} source={require('../assets/imageicon.png')}/></Pressable>
+      { image != null ? <Image style={styles.image2} source={{ uri: image }}/> 
+        : 
+        <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add An image</Text><Image style={styles.image} source={require('../assets/imageicon.png')}/></Pressable>
+      }
       <Button title='Add Post' onPress={() => { 
         if(image == null) {
           createPost()
@@ -96,13 +100,17 @@ const styles = StyleSheet.create({
     textinput: {
       borderWidth: 1,
       width: 250,
-      height: 250,
+      height: 150,
       textAlign: 'center',
       fontSize: 18
     },
     image: {
       height: 50,
       width: 50
+    },
+    image2: {
+      height: 250,
+      width: 250
     },
     pressable: {
       flexDirection: 'row',

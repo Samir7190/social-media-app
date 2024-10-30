@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useContext, useState } from 'react'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -14,9 +14,29 @@ const SignIn = ({navigation}) => {
       body: JSON.stringify({ email: email, password: password, }),
     
     })
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.log(err)) 
+    .then(async (response) => {
+      if(response.status == 200) {
+        const data = await response.json()
+        console.log(data.token)
+        console.log(data.userId)
+        try {
+          await AsyncStorage.setItem('token', data.token);
+          await AsyncStorage.setItem('userId', data.userId)
+        } catch (e) {
+          console.log(e)
+        }
+      } else if(response.status == 401) {
+        const error = await response.json()
+        console.log(error)
+      } else {
+        const error = await response.json()
+        console.log("Server Erro " + error)
+      }
+    })
+    .catch((error) => {
+      console.log("Network Error " + error)
+    })
+    
   }
   
   return (
