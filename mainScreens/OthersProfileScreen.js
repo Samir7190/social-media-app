@@ -4,29 +4,25 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const ProfileScreen = ({navigation}) => {
-  const [userId, setUserId] = useState('')
+const OthersProfileScreen = ({navigation, userId}) => {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const windowWidth = useWindowDimensions().width
+  const [postLength, setPostLength] = useState(null)
   useEffect(() => {
     const check = async () => {
     try {
-    const userId = await AsyncStorage.getItem('userId')
-    setUserId(userId)
-    
-    await fetch(`http://192.168.1.67:3000/${userId}`) 
+    fetch(`http://192.168.1.67:3000/${userId}`) 
     .then(response => response.json())
     .then(response => setUserPosts(response.post))
-    
     .catch(err => console.log(err))  
     
-    await fetch(`http://192.168.1.67:3000/user/${userId}`) 
+
+    fetch(`http://192.168.1.67:3000/user/${userId}`) 
     .then(response => response.json())
     .then(response => setUser(response))
     .catch(err => console.log(err))  
-    
+    setPostLength(user.following.length)
     } catch (error) {
       console.log(error)
     }
@@ -37,7 +33,10 @@ const ProfileScreen = ({navigation}) => {
   }, [userId])
   useEffect(() => {
     if(user != null){
-      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 1000);
+     
     }
   })
   if (isLoading == true) {
@@ -65,24 +64,24 @@ const ProfileScreen = ({navigation}) => {
       <View style={styles.profileOptions}>
         <Pressable style={styles.pressable} onPress={() => {
           navigation.navigate('AddPost')
-        }}><Text style={styles.text2}>+ Add Post</Text></Pressable>
-        <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
+        }}><Text style={styles.text2}>Follow</Text></Pressable>
+        <Pressable style={styles.pressable}><Text style={styles.text2}>Edit Profile</Text></Pressable>
     </View>
       </View>
     </View>
     
     <View style={styles.number}>
-      <View style={styles.displayNumbers}>
+      <View style={styles.displayNumbers}>  
       <Text style={styles.text}>Posts</Text>
-      <Text style={styles.text3}>{user.post.length}</Text>
+      <Text style={styles.text3}>{postLength}</Text>
       </View>
       <View style={styles.displayNumbers}>
       <Text style={styles.text}>Followers</Text>
-      <Text style={styles.text3}>{user.following.length}</Text>
+      <Text style={styles.text3}>{}</Text>
       </View>
       <View style={styles.displayNumbers}>
       <Text style={styles.text}>Following</Text>
-      <Text style={styles.text3}>{user.followers.length}</Text>
+      <Text style={styles.text3}>{}</Text>
       </View>
       </View>
     </View>
@@ -154,4 +153,4 @@ const styles = StyleSheet.create({
   },
   
 })
-export default ProfileScreen
+export default OthersProfileScreen

@@ -8,9 +8,11 @@ import SignIn from './auth/SignIn'
 import StackedScreens from './mainScreens/StackedScreens'
 import ProfileScreen from './mainScreens/ProfileScreen'
 import FriendsScreen from './mainScreens/FriendsScreen'
+
 import { MyProvider } from './MyContext'
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AddPost from './mainScreens/AddPost'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -63,6 +65,10 @@ const App = () => {
             iconName = focused
               ? 'account-group'
               : 'account-group'
+          } else if (route.name === 'AddPost') {
+            iconName = focused
+              ? 'plus-circle'
+              : 'plus-circle-outline'
           }
   
           
@@ -75,6 +81,7 @@ const App = () => {
       })}
        >
        <Tab.Screen name='home' component={StackedScreens} />
+       <Tab.Screen name='AddPost' component={AddPost} />
        <Tab.Screen name='Profile' component={ProfileScreen} />
        <Tab.Screen name='Users' component={FriendsScreen} />
        </Tab.Navigator>

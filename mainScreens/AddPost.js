@@ -33,7 +33,7 @@ const AddPost = ({navigation}) => {
       name: 'photo.png' + Date.now(),
     });
     formData.append('postData', 
-      JSON.stringify({ author: "671ce8cf7833974f431db2b0", text: `${text}`, likes: 0  })
+      JSON.stringify({ author: "6724b241c29533e66b655150", text: `${text}`, likes: 0  })
     )
     console.log(formData)
     console.log(formData._parts)

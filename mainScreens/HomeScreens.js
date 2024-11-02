@@ -16,24 +16,28 @@ const HomeScreens = ({navigation}) => {
   
   
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.mainApp}>
       <StatusBar backgroundColor='black'/>
-      <View style={styles.container}>
-                <View style={styles.mainHeader}>
-                    <Text style={styles.text} >Social Media App</Text>
-                </View>
-                <Post navigation={navigation}/> 
-             </View>
+      
           <FlatList data={userData} renderItem={({item}) =>( 
-           <Posts profilePicture={item.profilePicture} name={item.author.name} textpost={item.text} imageUrl={item.imageUrl} likeNumber={item.likes} postId={item._id} navigation={navigation} isFollowed={item.isFollowed} isLiked={item.isLiked} userId={item.author._id}/>
+           <Posts profilePicture={item.author.profilePicture} name={item.author.name} textpost={item.text} imageUrl={item.imageUrl} likeNumber={item.likes} postId={item._id} navigation={navigation} isFollowed={item.isFollowed} isLiked={item.isLiked} userId={item.author._id}/>
           )}
           keyExtractor={item => item._id}
-          
+          ListHeaderComponent={() => (
+              <View style={styles.container}>
+                <View style={styles.mainHeader}>
+                    <Text style={styles.text} >Facebook</Text>
+                </View> 
+              </View>
+          )}
           />
     </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
+  mainApp: {
+    backgroundColor: 'white'
+  },
   container: {
     backgroundColor: 'white',
    

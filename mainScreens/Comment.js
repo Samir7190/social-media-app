@@ -30,9 +30,10 @@ const Comment = () => {
         <Pressable style={styles.addCommentButton}
         onPress={() => {
           if(userComment == '') {
-            return
+            alert('Comment is empty')
           } else{
             addComment()
+            alert('Comment Added Successfully')
           }
         }}
         >
