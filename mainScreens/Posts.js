@@ -9,21 +9,34 @@ import Animated, {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
-const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, userId}) => {
+const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, userId, date}) => {
   const {selectedPostId, setSelectedPostId} = useContext(MyContext)
   const {selectedUserId, setSelectedUserId} = useContext(MyContext)
   const {height, width} = useWindowDimensions();
   const [likeIcon, setLikeIcon] = useState('')
+  const [postDate, setDate] = useState()
   useEffect(() => {
     if(isLiked == true) {
-      setLikeIcon('thumb-up')
+      setLikeIcon('heart')
     } else {
-      setLikeIcon('thumb-up-outline')
+      setLikeIcon('heart-outline')
     }
   }, [isLiked])
+  useEffect(() => {
+    setDate(showDate(date))
+  }, [])
+    const scale = useSharedValue(1);
   
+    // Animated style for scaling
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{ scale: scale.value }],
+      };
+    })
   const increaseLIke = () => {
-    
+    scale.value = withSpring(1.3, {}, () => {
+      scale.value = withSpring(1);
+    });
     fetch(`http://192.168.1.67:3000/post/${postId}`, {
       method: "PATCH",
       headers: {
@@ -81,6 +94,30 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
     setSelectedUserId(userId)
     navigation.navigate('OthersProfileScreen')
   }
+  const showDate = (timestamp) => {
+    const now = new Date();
+    console.log(now)
+    const postDate = new Date(timestamp);
+    const secondsPassed = Math.floor((now - postDate) / 1000);
+  
+    if (secondsPassed < 60) {
+      return `${secondsPassed} s`;
+    }
+    const minutesPassed = Math.floor(secondsPassed / 60);
+    if (minutesPassed < 60) {
+      return `${minutesPassed} m`;
+    }
+    const hoursPassed = Math.floor(minutesPassed / 60);
+    if (hoursPassed < 24) {
+      return `${hoursPassed} h`;
+    }
+    const daysPassed = Math.floor(hoursPassed / 24);
+    if (daysPassed < 7) {
+      return `${daysPassed} d`;
+    }
+    const weeksPassed = Math.floor(daysPassed / 7); 
+    return `${weeksPassed} w`;
+  }
   return (
     <View style={styles.container}>
       <View style={styles.headers}>
@@ -88,11 +125,11 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
         <Image style={styles.image} source={{ uri: profilePicture }} />
         <View style={styles.namesandfollow}>
       
-        <Text style={styles.text} onPress={() => goToProfile()}>{name} </Text>
-        <Text style={{fontSize: 20, color: 'grey'}}> 2d </Text>
+        <Text style={styles.text} onPress={() => goToProfile()}>{name}  · </Text>
+        <Text style={{fontSize: 20, color: 'grey'}}> {postDate}  · </Text>
       
       
-        <Pressable onPress={() => {
+        <Pressable onPress={() => { 
         if(isFollowed == true) {
           unFollow()
         } else{
@@ -114,7 +151,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       
       {imageUrl != '' && <Image style={{height: width, width: width}} source={{uri: imageUrl}} />} 
       <View style={styles.end}>
-        <Animated.View style={[animatedView]}>
+       
         <Pressable onPress={() => {
           if(isLiked == true) {
             decreaseLike()
@@ -122,20 +159,20 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
           } else{
             increaseLIke()
           }
-        }} style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
+        }} style={{width: width / 2.1, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
         {/* <Image style={styles.image2} source={require('../assets/like.png')} /> */}
+        <Animated.View style={[animatedStyle]}>
         <Icon name={likeIcon} size={30} /> 
-        <Text>{likeNumber}</Text>
-        </Pressable>
         </Animated.View>
-        <Pressable onPress={() => gotoComment()} style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
+        <Text>{likeNumber}</Text>
+        
+        </Pressable>
+        
+        <Pressable onPress={() => gotoComment()} style={{width: width / 2.1, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
         <Image style={styles.image2} source={require('../assets/comment.png')} />
         <Text>comment</Text>
         </Pressable>
-        <Pressable style={{width: width / 3.2, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-        <Image style={styles.image2} source={require('../assets/share.png')} />
-        <Text>Share</Text>
-        </Pressable>
+        
       </View>
     </View>
   )
@@ -169,7 +206,8 @@ const styles = StyleSheet.create({
     namesandfollow: {
       flex: 1,
       flexDirection: 'row',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      alignItems: 'center'
     },
     text: {
         fontWeight: 'bold',

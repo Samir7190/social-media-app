@@ -17,8 +17,7 @@ const SignIn = ({navigation}) => {
     .then(async (response) => {
       if(response.status == 200) {
         const data = await response.json()
-        console.log(data.token)
-        console.log(data.userId)
+        alert('Successfully Logged In')
         try {
           await AsyncStorage.setItem('token', data.token);
           await AsyncStorage.setItem('userId', data.userId)
@@ -27,10 +26,10 @@ const SignIn = ({navigation}) => {
         }
       } else if(response.status == 401) {
         const error = await response.json()
-        console.log(error)
+        alert('Invalid  Email or Password')
       } else {
         const error = await response.json()
-        console.log("Server Erro " + error)
+        alert("Server Error")
       }
     })
     .catch((error) => {

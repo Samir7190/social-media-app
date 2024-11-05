@@ -9,6 +9,7 @@ const ProfileScreen = ({navigation}) => {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isloggedIn, setIsLoggedIn] = useState(false)
   const windowWidth = useWindowDimensions().width
   useEffect(() => {
     const check = async () => {
@@ -21,12 +22,12 @@ const ProfileScreen = ({navigation}) => {
     .then(response => setUserPosts(response.post))
     
     .catch(err => console.log(err))  
-    
+    console.log(userPosts)
     await fetch(`http://192.168.1.67:3000/user/${userId}`) 
     .then(response => response.json())
-    .then(response => setUser(response))
+    .then(response => setUser(response)) 
     .catch(err => console.log(err))  
-    
+    console.log(user)
     } catch (error) {
       console.log(error)
     }
@@ -40,6 +41,15 @@ const ProfileScreen = ({navigation}) => {
       setIsLoading(false)
     }
   })
+  const signOut = async () => {
+    try{
+      AsyncStorage.removeItem('token')
+      AsyncStorage.removeItem('userId')
+      setIsLoggedIn(true)  
+    } catch(error) {
+      console.log(error)
+    }
+  }
   if (isLoading == true) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -51,7 +61,7 @@ const ProfileScreen = ({navigation}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={ user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (
@@ -61,12 +71,13 @@ const ProfileScreen = ({navigation}) => {
       <Image style={styles.image} source={{uri: user.profilePicture}}/>
       </View>
       <View style={styles.container}>
-      <Text style={styles.text}>Samir Pokharel</Text>
+      <Text style={styles.text}>{user.name}</Text>
       <View style={styles.profileOptions}>
         <Pressable style={styles.pressable} onPress={() => {
           navigation.navigate('AddPost')
         }}><Text style={styles.text2}>+ Add Post</Text></Pressable>
         <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
+        <Pressable style={styles.pressable} onPress={() => signOut()}><Text style={styles.text2}>Sign Out</Text></Pressable>
     </View>
       </View>
     </View>
@@ -109,8 +120,9 @@ const styles = StyleSheet.create({
     gap: 80,
     justifyContent: 'center',
     borderBottomWidth: 7,
-    borderColor: 'grey'
-
+    borderColor: 'grey',
+    borderTopWidth: 7,
+  
   },
   displayNumbers: {
     alignItems: 'center'
@@ -126,7 +138,9 @@ const styles = StyleSheet.create({
   profileOptions: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 25
+    gap: 20,
+    flexWrap: 'wrap',
+    flex: 1,
   },
   text: {
     fontSize: 24,
@@ -136,7 +150,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     borderRadius: 10,
     height: 40,
-    width: 120,
+    paddingLeft: 5,
+    paddingRight: 5,
     justifyContent: 'center',
     alignItems: 'center'
   },

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 const FriendsScreen = () => {
   const [users, setUsers] = useState(null)
   const [following, setFollowing] = useState()
+  const [followers, setFollowers] = useState()
   const follow = (userId) => {
     fetch('http://192.168.1.67:3000/follow', {
       method: "PATCH",
@@ -40,10 +41,17 @@ const FriendsScreen = () => {
   }, [users])
   useEffect(() => {
     if(users != null) {
-      const followingList = users.filter(item => item.isFollowed)
+      const followingList = users.filter(item => item.isFollowing)
       setFollowing(followingList)
     }
     }, [users])
+    useEffect(() => {
+      if(users != null) {
+        const followersList = users.filter(item => item.isFollowed)
+        setFollowers(followersList)
+      }
+      }, [users])
+
   return (
 
     <View style={styles.container}>
@@ -56,9 +64,9 @@ const FriendsScreen = () => {
                <View style={styles.headers}>
                 <View style={styles.header}>
                 <Image style={styles.image} source={{ uri: item.profilePicture }} />
-                <Text style={styles.text}>{item.name}</Text>
-              </View>
-              <Pressable onPress={() => {
+                <View style={styles.nameandfollowing}>
+                <Text style={styles.text}>{item.name}   </Text>
+                <Pressable onPress={() => {
                 if(item.isFollowed == true) {
                   unFollow(item._id)
                 } else{
@@ -68,21 +76,24 @@ const FriendsScreen = () => {
                 <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
               </Pressable>
               </View>
+              </View>
+              
+              </View>
               )
           }
       />
       </View>
       <View style={styles.containers}>
-      <Text style={styles.text}>Users</Text>
+      <Text style={styles.text}>Followers</Text>
       <FlatList 
-        data={users}
+        data={followers}
         renderItem={({item}) => (
       <View style={styles.headers}>
       <View style={styles.header}>
         <Image style={styles.image} source={{ uri: item.profilePicture }} />
-        <Text style={styles.text}>{item.name}</Text>
-      </View>
-      <Pressable onPress={() => {
+        <View style={styles.nameandfollowing}>
+        <Text style={styles.text}>{item.name}   </Text>
+        <Pressable onPress={() => {
         if(item.isFollowed == true) {
           unFollow(item._id)
         } else{
@@ -92,9 +103,39 @@ const FriendsScreen = () => {
         <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
       </Pressable>
       </View>
+      </View>
+      
+      </View>
         )}
       />
    </View>
+      <View style={styles.containers}>
+      <Text style={styles.text}>Users</Text>
+      <FlatList 
+        data={users}
+        renderItem={({item}) => (
+      <View style={styles.headers}>
+      <View style={styles.header}>
+        <Image style={styles.image} source={{ uri: item.profilePicture }} />
+        <View style={styles.nameandfollowing}>
+        <Text style={styles.text}>{item.name}   </Text>
+        <Pressable onPress={() => {
+        if(item.isFollowed == true) {
+          unFollow(item._id)
+        } else{
+          follow(item._id)
+        }
+      }}>
+        <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
+      </Pressable>
+      </View>
+      </View>
+      
+      </View>
+        )}
+      />
+   </View>
+  
       </View>
   )
 }
@@ -115,7 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 90,
+    gap: 20,
     flexWrap: 'wrap'
   },
   image: {
@@ -131,6 +172,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'blue',
     fontWeight: 'bold'
+  },
+  nameandfollowing: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center'
   }
 })
 export default FriendsScreen

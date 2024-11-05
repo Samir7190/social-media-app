@@ -1,14 +1,16 @@
 import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { MyContext } from '../MyContext'
 
-const OthersProfileScreen = ({navigation, userId}) => {
+const OthersProfileScreen = ({navigation}) => {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [postLength, setPostLength] = useState(null)
+  const {userId, setUserId} = useContext(MyContext)
+  const windowWidth = useWindowDimensions().width
   useEffect(() => {
     const check = async () => {
     try {
@@ -16,27 +18,28 @@ const OthersProfileScreen = ({navigation, userId}) => {
     .then(response => response.json())
     .then(response => setUserPosts(response.post))
     .catch(err => console.log(err))  
-    
+    console.log(userPosts)
 
     fetch(`http://192.168.1.67:3000/user/${userId}`) 
     .then(response => response.json())
     .then(response => setUser(response))
     .catch(err => console.log(err))  
-    setPostLength(user.following.length)
+    console.log(user)
+
     } catch (error) {
       console.log(error)
     }
     }
-    check()
+    check() 
     
     
   }, [userId])
   useEffect(() => {
     if(user != null){
-      setTimeout(() => {
+      setTimeout(() =>{
         setIsLoading(false)
-      }, 1000);
-     
+      }, 400)
+      
     }
   })
   if (isLoading == true) {
@@ -50,7 +53,7 @@ const OthersProfileScreen = ({navigation, userId}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={ user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (
@@ -60,28 +63,28 @@ const OthersProfileScreen = ({navigation, userId}) => {
       <Image style={styles.image} source={{uri: user.profilePicture}}/>
       </View>
       <View style={styles.container}>
-      <Text style={styles.text}>Samir Pokharel</Text>
+      <Text style={styles.text}>{user.name}</Text>
       <View style={styles.profileOptions}>
         <Pressable style={styles.pressable} onPress={() => {
           navigation.navigate('AddPost')
-        }}><Text style={styles.text2}>Follow</Text></Pressable>
-        <Pressable style={styles.pressable}><Text style={styles.text2}>Edit Profile</Text></Pressable>
+        }}><Text style={styles.text2}>+ Add Post</Text></Pressable>
+        <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
     </View>
       </View>
     </View>
     
     <View style={styles.number}>
-      <View style={styles.displayNumbers}>  
+      <View style={styles.displayNumbers}>
       <Text style={styles.text}>Posts</Text>
-      <Text style={styles.text3}>{postLength}</Text>
+      <Text style={styles.text3}>{user.post.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
       <Text style={styles.text}>Followers</Text>
-      <Text style={styles.text3}>{}</Text>
+      <Text style={styles.text3}>{user.following.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
       <Text style={styles.text}>Following</Text>
-      <Text style={styles.text3}>{}</Text>
+      <Text style={styles.text3}>{user.followers.length}</Text>
       </View>
       </View>
     </View>
@@ -108,8 +111,9 @@ const styles = StyleSheet.create({
     gap: 80,
     justifyContent: 'center',
     borderBottomWidth: 7,
-    borderColor: 'grey'
-
+    borderColor: 'grey',
+    borderTopWidth: 7,
+  
   },
   displayNumbers: {
     alignItems: 'center'

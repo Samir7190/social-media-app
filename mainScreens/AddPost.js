@@ -1,11 +1,14 @@
 import { View, Text , StyleSheet, TextInput, Button, Pressable, Image} from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPost = ({navigation}) => {
   const [text, setText] = useState('')
   const [image, setImage] = useState(null);
   const [imageMimeType, setImageMimeType] = useState(null)
+  const [userId, setUserId] = useState(null)
+  
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -25,7 +28,7 @@ const AddPost = ({navigation}) => {
     }
   }
   const uploadImage = async () => {
-    
+   
     const formData = new FormData();
     formData.append('image', {
       uri: image,
@@ -33,7 +36,7 @@ const AddPost = ({navigation}) => {
       name: 'photo.png' + Date.now(),
     });
     formData.append('postData', 
-      JSON.stringify({ author: "6724b241c29533e66b655150", text: `${text}`, likes: 0  })
+      JSON.stringify({ author: userId, text: `${text}`, likes: 0, date: Date.now()  })
     )
     console.log(formData)
     console.log(formData._parts)
@@ -46,23 +49,31 @@ const AddPost = ({navigation}) => {
       },
       body: formData
     })
-    
+    alert('Post Added Successfully')
+    setImage(null)
+    setText('')
   } catch(error) {
     console.error('Error uploading image:', error);
   }
   };
-  const createPost = () => {
-    fetch('http:192.168.1.67:3000/post/withoutImage', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ author: "671ce8cf7833974f431db2b0", text: `${text}`, likes: 0  }),
+  const createPost = async () => {
     
-    })
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.log(err)) 
+    try {
+      await fetch('http:192.168.1.67:3000/post/withoutImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ author: userId, text: `${text}`, likes: 0, date: Date.now()  }),
+      
+      })
+      alert('Post Added Successfully')
+      setText('')
+    } catch(error) {
+      console.log(error)
+    }
+  
+
     navigation.navigate('Home')
   }
   return (
