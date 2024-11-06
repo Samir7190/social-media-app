@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, Image, Pressable, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Image, Pressable, FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
+
 
 
 const FriendsScreen = () => {
@@ -133,6 +134,7 @@ const FriendsScreen = () => {
       
       </View>
         )}
+      
       />
    </View>
   
@@ -141,7 +143,7 @@ const FriendsScreen = () => {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+   
     padding: 10,
     gap: 33,
     backgroundColor: 'white'
@@ -159,7 +161,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 20,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    padding: 5
   },
   image: {
     height: 60,

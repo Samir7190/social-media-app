@@ -55,7 +55,7 @@ const OthersProfileScreen = ({navigation}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} date={item.date} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} date={item.date} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} isLiked={item.isLiked} UserId={user._id}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (

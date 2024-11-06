@@ -18,37 +18,15 @@ import AddPost from './mainScreens/AddPost'
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 const AppNavigator = () => {
-  const [isLoading, setIsLoading] = useState(true)
-  //const [isLoggedIn, setIsLogedIn] = useState(false)
-  // const {isLoggedIn, setIsLogedIn} = useContext(MyContext)
-  // const {token, userId} = useContext(MyContext)
-  const {token} = useContext(MyContext)
-//   useEffect(() => {
-//     let value;
-//     const check = async () => {
-//     try {
-//       value = await AsyncStorage.getItem('token');
-//       if (value !== null) {
-//         setIsLogedIn(true)  
-//       } else {
-//         setIsLogedIn(false)
-//       }
-//     } catch (error) {
-//       console.error("Error checking key:", error);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//     }
-//     check()
-//   })
   
-//   if (isLoading) {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <ActivityIndicator size="large" color="#0000ff" />
-//       </View>
-//     );
-//   }                       
+  const {token, isLoading, setIsLoading} = useContext(MyContext)
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }                       
   return (
     
     <NavigationContainer>

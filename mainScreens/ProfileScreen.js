@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { MyContext } from '../MyContext'
+import { TouchableOpacity } from 'react-native'
 
 const ProfileScreen = ({navigation}) => {
   const [userPosts, setUserPosts] = useState([])
@@ -25,10 +26,7 @@ const ProfileScreen = ({navigation}) => {
     .then(response => response.json())
     .then(response => setUser(response)) 
     .catch(err => console.log(err))  
-    setTimeout(() => {
-      console.log(user) 
-      console.log(userPosts)
-    }, 1000);
+    
     
     } catch (error) {
       console.log(error)
@@ -63,21 +61,25 @@ const ProfileScreen = ({navigation}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} userId={user._id}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (
       <View>
       <View style={styles.mainProfile}>
-      <View>
+      <View style={styles.imageContainer}>
       <Image style={styles.image} source={{uri: user.profilePicture}}/>
       </View>
       <View style={styles.container}>
-      <Text style={styles.text}>{user.name}</Text>
+      <Text style={{fontSize: 32, fontWeight: '500'}}>{user.name}</Text>
       <View style={styles.profileOptions}>
+        
         <Pressable style={styles.pressable} onPress={() => {
           navigation.navigate('AddPost')
-        }}><Text style={styles.text2}>+ Add Post</Text></Pressable>
+        }}>
+          <Text style={styles.text2}>+ Add Post</Text>
+       
+        </Pressable>
         <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
         <Pressable style={styles.pressable} onPress={() => signOut()}><Text style={styles.text2}>Sign Out</Text></Pressable>
     </View>
@@ -98,6 +100,7 @@ const ProfileScreen = ({navigation}) => {
       <Text style={styles.text3}>{user.followers.length}</Text>
       </View>
       </View>
+
     </View>
     )}
     />
@@ -107,11 +110,11 @@ const ProfileScreen = ({navigation}) => {
 }
 const styles = StyleSheet.create({
   container: {
-    marginTop: 6,
+    alignItems: 'center',
     gap: 6
   },
   mainProfile: {
-    flexDirection: 'row',
+  
     gap: 15,
     marginTop: 15,
     marginLeft: 5,
@@ -131,34 +134,35 @@ const styles = StyleSheet.create({
   },
   image: {
     borderWidth: 1,
-   
     borderRadius: 100,
-    height: 80,
-    width: 80,
+    height: 150,
+    width: 150,
   
   },
   profileOptions: {
     flexDirection: 'row',
+    width: '100%',
     justifyContent: 'center',
-    gap: 20,
+    gap: 40,
     flexWrap: 'wrap',
     flex: 1,
   },
+  
   text: {
     fontSize: 24,
     fontWeight: 'bold'
   },
   pressable: {
-    backgroundColor: 'blue',
-    borderRadius: 10,
-    height: 40,
+    backgroundColor: '#0388fc',
+    borderRadius: 6,
+    height: '150%',
     paddingLeft: 5,
     paddingRight: 5,
     justifyContent: 'center',
-    alignItems: 'center'
+    
   },
   text2: {
-    fontSize: 22,
+    fontSize: 24,
     color: 'white'
   },
  
@@ -169,6 +173,8 @@ const styles = StyleSheet.create({
   text3: {
     fontSize: 24
   },
-  
+  imageContainer: {
+    alignItems: 'center'
+  }
 })
 export default ProfileScreen

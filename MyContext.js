@@ -9,23 +9,26 @@ const MyProvider = ({ children }) => {
   const [selectedUserId, setSelectedUserId] = useState()
   const [token, setToken] = useState(null)
   const [userId, setUserId] = useState(null)
-  const [fakeToken, setFakeToken] = useState(null)
-  const fakeLogIn = () => {
-    setFakeToken('asdfjkl')
-    console.log('Logged In')
-  }
+  const [isLoading, setIsLoading] = useState(true)
+  
   useEffect(() => {
     const getItem = async () => {
+      try{
       const token = await AsyncStorage.getItem('token')
       const userId = await AsyncStorage.getItem('userId')
       setToken(token)
       setUserId(userId)
+    } catch(error) {
+      console.log(error)
+    } finally{
+      setIsLoading(false)
     }
+  }    
     getItem() 
-  }, []) 
+  }, [token]) 
   
   return (
-    <MyContext.Provider value={{ isLoggedIn, setIsLogedIn, selectedPostId, setSelectedPostId, selectedUserId, setSelectedUserId, token, setToken, userId, fakeToken, setFakeToken, fakeLogIn }}>
+    <MyContext.Provider value={{ isLoggedIn, setIsLogedIn, selectedPostId, setSelectedPostId, selectedUserId, setSelectedUserId, token, setToken, userId, isLoading, setIsLoading   }}>
       {children}
     </MyContext.Provider>
   );

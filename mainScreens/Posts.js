@@ -9,9 +9,10 @@ import Animated, {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
-const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, userId, date}) => {
+const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, UserId, date, like, setLiked}) => {
   const {selectedPostId, setSelectedPostId} = useContext(MyContext)
   const {selectedUserId, setSelectedUserId} = useContext(MyContext)
+  const {userId} = useContext(MyContext)
   const {height, width} = useWindowDimensions();
   const [likeIcon, setLikeIcon] = useState('')
   const [postDate, setDate] = useState()
@@ -42,7 +43,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({ userId: '671ce9ab7833974f431db2bb'})
+      body: JSON.stringify({ userId: userId})
     })
     .then(response => response.json())
     .then(response => console.log(response))
@@ -55,7 +56,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id: `${postId}`, userId: '671ce9ab7833974f431db2bb'  }),
+      body: JSON.stringify({ id: `${postId}`, userId: userId  }),
     })
     .then(response => response.json())
     .then(response => console.log(response))
@@ -68,7 +69,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId: userId, followerId: '671ce9ab7833974f431db2bb'})
+      body: JSON.stringify({ userId: UserId, followerId: userId})
     })
     .then(response => response.json())
       .then(response => console.log(response))
@@ -80,7 +81,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId: userId, followerId: '671ce9ab7833974f431db2bb'})
+      body: JSON.stringify({ userId: UserId, followerId: userId})
       })
       .then(response => response.json())
       .then(response => console.log(response))
@@ -91,7 +92,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
     navigation.navigate('Comment')
   }
   const goToProfile = () => {
-    setSelectedUserId(userId)
+    setSelectedUserId(UserId)
     navigation.navigate('OthersProfileScreen')
   }
   const showDate = (timestamp) => {
@@ -125,9 +126,10 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
         <Image style={styles.image} source={{ uri: profilePicture }} />
         <View style={styles.namesandfollow}>
       
-        <Text style={styles.text} onPress={() => goToProfile()}>{name}  · </Text>
-        <Text style={{fontSize: 20, color: 'grey'}}> {postDate}  · </Text>
-      
+        <Text style={styles.text} onPress={() => goToProfile()}>{name} </Text>
+        <Text style={styles.text}> · </Text>
+        <Text style={{fontSize: 20, color: 'grey'}}> {postDate} </Text>
+        <Text style={styles.text}> · </Text>
       
         <Pressable onPress={() => { 
         if(isFollowed == true) {
@@ -136,7 +138,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
           follow()
         }
       }}>
-        <Text style={styles.text2}>{isFollowed ? 'Following' : 'Follow'}</Text>
+        <Text style={styles.text2}> {isFollowed ? 'Following' : 'Follow'}</Text>
       </Pressable>
     
         
@@ -160,7 +162,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
             increaseLIke()
           }
         }} style={{width: width / 2.1, borderWidth: 1, borderRadius: 100, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-        {/* <Image style={styles.image2} source={require('../assets/like.png')} /> */}
+        
         <Animated.View style={[animatedStyle]}>
         <Icon name={likeIcon} size={30} /> 
         </Animated.View>

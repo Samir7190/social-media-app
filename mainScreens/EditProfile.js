@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet, Image, Button, TextInput, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
+import { MyContext } from '../MyContext';
 
 const EditProfile = () => {
   const [userName, setUserName] = useState('Samir Pokharel')
   const [image, setImage] = useState(null);
   const [imageMimeType, setImageMimeType] = useState(null)
   const [disabledState, setDisableState] = useState(true)
+  const {userId} = useContext(MyContext)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -35,7 +37,7 @@ const EditProfile = () => {
     });
     console.log(formData)
     try {
-        fetch('http://192.168.1.67:3000/updateProfilePicture/671ce8cf7833974f431db2b0', {
+        fetch(`http://192.168.1.67:3000/updateProfilePicture/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-type': 'multipart/form-data'
@@ -44,6 +46,7 @@ const EditProfile = () => {
         })
         console.log(formData)
         console.log(formData._parts)
+        alert('Profile Picture updated successfully')
     } catch(error) {
         alert(error) 
     }

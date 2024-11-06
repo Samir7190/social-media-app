@@ -20,7 +20,7 @@ const HomeScreens = ({navigation}) => {
       <StatusBar backgroundColor='black'/>
       
           <FlatList data={userData} renderItem={({item}) =>( 
-           <Posts profilePicture={item.author.profilePicture} name={item.author.name} textpost={item.text} imageUrl={item.imageUrl} likeNumber={item.likes} postId={item._id} navigation={navigation} isFollowed={item.isFollowed} isLiked={item.isLiked} userId={item.author._id} date={item.date}/>
+           <Posts profilePicture={item.author.profilePicture} name={item.author.name} textpost={item.text} imageUrl={item.imageUrl} likeNumber={item.likes} postId={item._id} navigation={navigation} isFollowed={item.isFollowed} isLiked={item.isLiked} UserId={item.author._id} date={item.date}/>
           )}
           keyExtractor={item => item._id}
           ListHeaderComponent={() => (
