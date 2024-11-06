@@ -1,13 +1,14 @@
 import { View, Text , StyleSheet, TextInput, Button, Pressable, Image} from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MyContext } from '../MyContext';
 
 const AddPost = ({navigation}) => {
   const [text, setText] = useState('')
   const [image, setImage] = useState(null);
   const [imageMimeType, setImageMimeType] = useState(null)
-  const [userId, setUserId] = useState(null)
+  const { userId } = useContext(MyContext)
   
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

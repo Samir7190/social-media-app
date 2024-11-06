@@ -1,33 +1,35 @@
 import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { MyContext } from '../MyContext'
 
 const ProfileScreen = ({navigation}) => {
-  const [userId, setUserId] = useState('')
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isloggedIn, setIsLoggedIn] = useState(false)
+  const {token, setToken} = useContext(MyContext)
+  const {userId} = useContext(MyContext)
   const windowWidth = useWindowDimensions().width
   useEffect(() => {
-    const check = async () => {
+    const check = async () => { 
     try {
-    const userId = await AsyncStorage.getItem('userId')
-    setUserId(userId)
-    
-    await fetch(`http://192.168.1.67:3000/${userId}`) 
+    fetch(`http://192.168.1.67:3000/${userId}`) 
     .then(response => response.json())
-    .then(response => setUserPosts(response.post))
+    .then(response => setUserPosts(response))
     
     .catch(err => console.log(err))  
-    console.log(userPosts)
-    await fetch(`http://192.168.1.67:3000/user/${userId}`) 
+    
+    fetch(`http://192.168.1.67:3000/user/${userId}`) 
     .then(response => response.json())
     .then(response => setUser(response)) 
     .catch(err => console.log(err))  
-    console.log(user)
+    setTimeout(() => {
+      console.log(user) 
+      console.log(userPosts)
+    }, 1000);
+    
     } catch (error) {
       console.log(error)
     }
@@ -35,7 +37,7 @@ const ProfileScreen = ({navigation}) => {
     check()
     
     
-  }, [userId])
+  }, [])
   useEffect(() => {
     if(user != null){
       setIsLoading(false)
@@ -45,7 +47,7 @@ const ProfileScreen = ({navigation}) => {
     try{
       AsyncStorage.removeItem('token')
       AsyncStorage.removeItem('userId')
-      setIsLoggedIn(true)  
+      setToken(null)  
     } catch(error) {
       console.log(error)
     }
@@ -61,7 +63,7 @@ const ProfileScreen = ({navigation}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} userId={user._id}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (

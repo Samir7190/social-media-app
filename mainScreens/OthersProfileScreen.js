@@ -10,24 +10,26 @@ const OthersProfileScreen = ({navigation}) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const {userId, setUserId} = useContext(MyContext)
-  const windowWidth = useWindowDimensions().width
+  const {selectedUserId, setSelelectedUserId} = useContext(MyContext)
   useEffect(() => {
     const check = async () => {
     try {
-    fetch(`http://192.168.1.67:3000/${userId}`) 
+    fetch(`http://192.168.1.67:3000/${selectedUserId}`) 
     .then(response => response.json())
-    .then(response => setUserPosts(response.post))
+    .then(response => setUserPosts(response))
     .catch(err => console.log(err))  
     console.log(userPosts)
 
-    fetch(`http://192.168.1.67:3000/user/${userId}`) 
+    fetch(`http://192.168.1.67:3000/user/${selectedUserId}`) 
     .then(response => response.json())
     .then(response => setUser(response))
     .catch(err => console.log(err))  
     console.log(user)
-
+    console.log(userPosts)
     } catch (error) {
       console.log(error)
+    } finally {
+      console.log(userPosts)
     }
     }
     check() 
@@ -53,7 +55,7 @@ const OthersProfileScreen = ({navigation}) => {
     <SafeAreaView>
     <StatusBar  backgroundColor='black'/>
     <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
+    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} date={item.date} postId={item._id} navigation={navigation} imageUrl={item.imageUrl}/>
     )}
     keyExtractor={item => item._id} 
     ListHeaderComponent={() => (

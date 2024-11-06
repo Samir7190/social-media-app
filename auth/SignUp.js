@@ -1,60 +1,62 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useEffect, useState, useTransition } from 'react'
 
-const SignUp = () => {
+const SignUp = ({navigation}) => {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [fullNameError, setFullNameError] = useState(null)
-  const [passwordError, setPasswordError] = useState(null)
-  const [emailError, setEmailError] = useState(null)
+  const [errors, setErrors] = useState({})
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  const SignUp = () => {
+  const validateForm = () => {
+    let errors = {}
     if(fullName.length < 8) {
-      setFullNameError('Full Name must be 8 characters long')
+      errors.errorfullName = 'Full Must be 8 Characters long'
     }
     if(validateEmail(email) == false) {
-      setEmailError('Please enter a valid email')
+      errors.errorEmail = 'Must be a valid Email'
     }
     if(password.length < 8) {
-      setPasswordError('password must be 8 characters long')
+      errors.errorPassword = "Passwords must be 8 characters long"
     }
-    if(fullName.length > 8) {
-      setFullNameError(null)
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+  const SignUp = () => {
+    if(validateForm()) {
+      
+      fetch('http://192.168.1.67:3000/auth/signUp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email, password: password, name: fullName  }),
+      
+      })
+      .then(response => response.json())
+      .then(response => console.log(response))
+      .catch(err => console.log(err)) 
+      alert('Account Successfull created')
+      setFullName('')
+      setEmail('')
+      setPassword('')
+      setErrors({})
+      navigation.navigate('SignIn')
     }
-    if(validateEmail(email) ) {
-      setEmailError(null)
-    }
-    if(password.length > 8) {
-      setPasswordError(null)
-    }
-    if(fullNameError == null && passwordError == null && emailError == null){
-      alert('Account Created Successfully')
-    }
-    fetch('http://192.168.1.67:3000/auth/signUp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: email, password: password, name: fullName  }),
+
     
-    })
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.log(err)) 
   }
   return (
     <View style={styles.container}>
     <View style={styles.container2}>
       <TextInput style={styles.textinput} placeholder='Full name' value={fullName} onChangeText={(val) => setFullName(val)}/>
-      {fullNameError != null && <Text>{fullNameError}</Text>}
+      {errors.errorfullName ? <Text style={styles.errorText}>{errors.errorfullName}</Text> : null}
       <TextInput style={styles.textinput} placeholder='E-mail' value={email} onChangeText={(val) => setEmail(val)}/>
-      {emailError != null && <Text>{emailError}</Text>}
+      {errors.errorEmail ? <Text style={styles.errorText}>{errors.errorEmail}</Text> : null}
       <TextInput style={styles.textinput} placeholder='Password' value={password} onChangeText={(val) => setPassword(val)}/>
-      {passwordError != null && <Text>{passwordError}</Text>}
+      {errors.errorPassword ? <Text style={styles.errorText}>{errors.errorPassword}</Text> : null}
     <Pressable style={styles.pressable} onPress={SignUp}><Text style={styles.pressabletext}>Create Account</Text></Pressable>
     </View>
   </View>
@@ -90,6 +92,9 @@ const styles = StyleSheet.create({
   pressabletext: {
     color: 'white',
     fontSize: 20
+  },
+  errorText: {
+    color: 'red'
   }
 })
 export default SignUp

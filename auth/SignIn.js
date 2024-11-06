@@ -1,10 +1,14 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useContext, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MyContext } from '../MyContext';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const {token, setToken, fakeLogIn} = useContext(MyContext)
+
   const logIn = () => {
     fetch('http://192.168.1.67:3000/auth/logIn', {
       method: 'POST',
@@ -17,10 +21,13 @@ const SignIn = ({navigation}) => {
     .then(async (response) => {
       if(response.status == 200) {
         const data = await response.json()
-        alert('Successfully Logged In')
         try {
-          await AsyncStorage.setItem('token', data.token);
-          await AsyncStorage.setItem('userId', data.userId)
+          const token = AsyncStorage.setItem('token', data.token)
+          
+          await setToken(token)
+          
+          const userId = AsyncStorage.setItem('userId', data.userId)
+           
         } catch (e) {
           console.log(e)
         }
@@ -35,7 +42,7 @@ const SignIn = ({navigation}) => {
     .catch((error) => {
       console.log("Network Error " + error)
     })
-    
+      
   }
   
   return (
@@ -44,7 +51,7 @@ const SignIn = ({navigation}) => {
         <TextInput style={styles.textinput} placeholder='E-mail' value={email} onChangeText={(val) => setEmail(val)}/>
         <TextInput style={styles.textinput} placeholder='Password' value={password} onChangeText={(val) => setPassword(val)}/>
         
-        <Pressable style={styles.pressable} onPress={logIn}><Text style={styles.pressabletext}>Log In</Text></Pressable>
+        <Pressable style={styles.pressable} onPress={() => logIn()}><Text style={styles.pressabletext}>Log In</Text></Pressable>
         <Text>or</Text>
         <Pressable style={styles.pressable} onPress={() => navigation.navigate('SignUp')}><Text style={styles.pressabletext}>Create New Account</Text></Pressable>
       </View>

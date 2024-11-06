@@ -141,8 +141,10 @@ const FriendsScreen = () => {
 }
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 10,
-    gap: 33
+    gap: 33,
+    backgroundColor: 'white'
   },
   containers: {
     gap: 10

@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     textpost: {
       paddingLeft: 8,
       paddingRight: 8,
-      fontSize: 18,
+      fontSize: 20,
       flex: 1,
       flexWrap: 'wrap'
     }

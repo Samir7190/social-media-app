@@ -4,21 +4,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const MyContext = createContext();
 
 const MyProvider = ({ children }) => {
-  const [isLoggedIn, setIsLogedIn] = useState(false)
+  const [isLoggedIn, setIsLogedIn] = useState(null)
   const [selectedPostId, setSelectedPostId] = useState()
   const [selectedUserId, setSelectedUserId] = useState()
-  let token;
-  let userId
-  const getItem = async () => {
-    token =await AsyncStorage.getItem('token')
-    userId = await AsyncStorage.getItem('userId')
-  } 
+  const [token, setToken] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [fakeToken, setFakeToken] = useState(null)
+  const fakeLogIn = () => {
+    setFakeToken('asdfjkl')
+    console.log('Logged In')
+  }
   useEffect(() => {
-    getItem()
-  }) 
+    const getItem = async () => {
+      const token = await AsyncStorage.getItem('token')
+      const userId = await AsyncStorage.getItem('userId')
+      setToken(token)
+      setUserId(userId)
+    }
+    getItem() 
+  }, []) 
   
   return (
-    <MyContext.Provider value={{ isLoggedIn, setIsLogedIn, selectedPostId, setSelectedPostId, selectedUserId, setSelectedUserId, token, userId }}>
+    <MyContext.Provider value={{ isLoggedIn, setIsLogedIn, selectedPostId, setSelectedPostId, selectedUserId, setSelectedUserId, token, setToken, userId, fakeToken, setFakeToken, fakeLogIn }}>
       {children}
     </MyContext.Provider>
   );
