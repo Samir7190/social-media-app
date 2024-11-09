@@ -12,22 +12,21 @@ const HomeScreens = ({navigation}) => {
     .then(response => setUserData(response))
     
     .catch(err => console.log(err)) 
-  })
+  }, [userData])
   
  
   return (
     <SafeAreaView style={styles.mainApp}>
       <StatusBar backgroundColor='black'/>
-      
-          <FlatList data={userData} renderItem={({item}) =>( 
+        <FlatList data={userData} renderItem={({item}) =>( 
            <Posts profilePicture={item.author.profilePicture} name={item.author.name} textpost={item.text} imageUrl={item.imageUrl} likeNumber={item.likes} postId={item._id} navigation={navigation} isFollowed={item.isFollowed} isLiked={item.isLiked} UserId={item.author._id} date={item.date}/>
           )}
           keyExtractor={item => item._id}
           ListHeaderComponent={() => (
               <View style={styles.container}>
                 <View style={styles.mainHeader}>
-                    <Text style={styles.text} >Facebook</Text>
-                </View> 
+                    <Text style={styles.text} >LinkUp</Text>
+                  </View> 
               </View>
           )}
           />
@@ -43,9 +42,9 @@ const styles = StyleSheet.create({
    
   },
   mainHeader: {
-    height: 50,
+    
     justifyContent: 'center',
-    paddingLeft: 10,
+    padding: 10,
     borderBottomColor: '#909091',
     borderBottomWidth: 4
   },

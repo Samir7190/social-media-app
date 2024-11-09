@@ -6,8 +6,7 @@ import { MyContext } from '../MyContext';
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
-  const {token, setToken, fakeLogIn} = useContext(MyContext)
+  const {setToken} = useContext(MyContext)
 
   const logIn = () => {
     fetch('http://192.168.1.67:3000/auth/logIn', {
@@ -23,7 +22,6 @@ const SignIn = ({navigation}) => {
         const data = await response.json()
         try {
           const token = AsyncStorage.setItem('token', data.token)
-          
           await setToken(token)
           
           const userId = AsyncStorage.setItem('userId', data.userId)

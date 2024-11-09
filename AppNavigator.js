@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { View, ActivityIndicator } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -8,18 +8,16 @@ import SignIn from './auth/SignIn'
 import StackedScreens from './mainScreens/StackedScreens'
 import ProfileScreen from './mainScreens/ProfileScreen'
 import FriendsScreen from './mainScreens/FriendsScreen'
-
-import { MyProvider } from './MyContext'
 import { MyContext } from './MyContext'
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import AddPost from './mainScreens/AddPost'
+import FriendsNavigationScreen from './mainScreens/FriendsNavigationScreen'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 const AppNavigator = () => {
   
-  const {token, isLoading, setIsLoading} = useContext(MyContext)
+  const {token, isLoading} = useContext(MyContext)
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -33,32 +31,21 @@ const AppNavigator = () => {
       {token != null ? 
        <Tab.Navigator 
        screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {   
+        tabBarIcon: ({ color, size }) => {   
           let iconName;
-  
           if (route.name === 'home') {
-            iconName = focused
-              ? 'home'
-              : 'home';
+            iconName = 'home';
           } else if (route.name === 'Profile') {
-            iconName = focused
-              ? 'account'
-              : 'account';
+            iconName = 'account';
           } else if (route.name === 'Users') {
-            iconName = focused
-              ? 'account-group'
-              : 'account-group'
+            iconName = 'account-group'
           } else if (route.name === 'AddPost') {
-            iconName = focused
-              ? 'plus-circle'
-              : 'plus-circle-outline'
+            iconName = 'plus-circle-outline'
           }
-  
-          
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'blue',
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: 'grey',
         headerShown: false,
         tabBarShowLabel: false
       })}
@@ -67,6 +54,7 @@ const AppNavigator = () => {
        <Tab.Screen name='AddPost' component={AddPost} />
        <Tab.Screen name='Profile' component={ProfileScreen} />
        <Tab.Screen name='Users' component={FriendsScreen} />
+       <Tab.Screen name='FriendsNavigationScreen' component={FriendsNavigationScreen}/>
        </Tab.Navigator>
        : 
        <Stack.Navigator screenOptions={{ headerShown: true}}>
@@ -76,11 +64,7 @@ const AppNavigator = () => {
        </Stack.Navigator>
    
     }
-  
-    </NavigationContainer>
-    
+      </NavigationContainer>
   )
-  
 }
-
 export default AppNavigator

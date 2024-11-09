@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList } from 'react-native'
+import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList, ScrollView } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
@@ -13,34 +13,35 @@ const ProfileScreen = ({navigation}) => {
   const {token, setToken} = useContext(MyContext)
   const {userId} = useContext(MyContext)
   const windowWidth = useWindowDimensions().width
-  useEffect(() => {
-    const check = async () => { 
+  const fetchUser = async () => {
+    try{
+      const response2 = await fetch(`http://192.168.1.67:3000/user/${userId}`) 
+      const data2 = await response2.json()
+      setUser(data2) 
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  const fetchUserPosts = async () => { 
     try {
-    fetch(`http://192.168.1.67:3000/${userId}`) 
-    .then(response => response.json())
-    .then(response => setUserPosts(response))
-    
-    .catch(err => console.log(err))  
-    
-    fetch(`http://192.168.1.67:3000/user/${userId}`) 
-    .then(response => response.json())
-    .then(response => setUser(response)) 
-    .catch(err => console.log(err))  
-    
+    const response = await fetch(`http://192.168.1.67:3000/${userId}`) 
+    const data = await response.json()
+    setUserPosts(data)
     
     } catch (error) {
       console.log(error)
-    }
-    }
-    check()
-    
-    
-  }, [])
-  useEffect(() => {
-    if(user != null){
+    } finally {
       setIsLoading(false)
     }
-  })
+
+    }
+  useEffect(() =>{
+    fetchUser()
+  }, [])
+  useEffect(() => {
+    fetchUserPosts()
+  }, [userPosts])
   const signOut = async () => {
     try{
       AsyncStorage.removeItem('token')
@@ -50,21 +51,8 @@ const ProfileScreen = ({navigation}) => {
       console.log(error)
     }
   }
-  if (isLoading == true) {
+  const HeaderComponent = () => {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  } else {
-  return (
-    <SafeAreaView>
-    <StatusBar  backgroundColor='black'/>
-    <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
-    )}
-    keyExtractor={item => item._id} 
-    ListHeaderComponent={() => (
       <View>
       <View style={styles.mainProfile}>
       <View style={styles.imageContainer}>
@@ -100,14 +88,30 @@ const ProfileScreen = ({navigation}) => {
       <Text style={styles.text3}>{user.followers.length}</Text>
       </View>
       </View>
-
     </View>
+    )
+  }
+  if (isLoading == true) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  } 
+  return (
+    <ScrollView>
+    <StatusBar  backgroundColor='black'/>
+    {HeaderComponent()}
+    {userPosts.map((item) => 
+      <View key={item._id}> 
+      <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
+       
+       </View>
     )}
-    />
-    </SafeAreaView>
+    </ScrollView>
   )
 }
-}
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',

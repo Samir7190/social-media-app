@@ -5,7 +5,7 @@ import { MyContext } from '../MyContext'
 const Comment = () => {
   const [comments, setComments] = useState()
   const [userComment, setUserComment] = useState('')
-  const {selectedPostId, setSelectedPostId} = useContext(MyContext)
+  const {selectedPostId, userId} = useContext(MyContext)
   useEffect(() => {
     fetch(`http://192.168.1.67:3000/post/${selectedPostId}`)
     .then(response => response.json())
@@ -18,7 +18,7 @@ const Comment = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ cid: "671ce9ab7833974f431db2bb", postId: `${selectedPostId}`, comment: userComment }),
+      body: JSON.stringify({ cid: userId, postId: `${selectedPostId}`, comment: userComment }),
     
     })
     setUserComment('')
@@ -46,7 +46,7 @@ const Comment = () => {
         
           <View style={styles.container}>
             
-          <Image style={styles.image} source={require('../mushashi.webp')}/>
+          <Image style={styles.image} source={{uri: item.commenter.profilePicture}}/>
           <View style={styles.comment}>
           <Text style={{fontSize: 18, fontWeight: 'bold'}}>{item.commenter.name}</Text>
           <Text style={{fontSize: 18}}>{item.comment}</Text>

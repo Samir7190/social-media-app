@@ -1,31 +1,31 @@
 import { View, Text, StyleSheet, Image, Pressable, FlatList, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-
-
+import React, { useContext, useEffect, useState } from 'react'
+import { MyContext } from '../MyContext'
 
 const FriendsScreen = () => {
   const [users, setUsers] = useState(null)
   const [following, setFollowing] = useState()
   const [followers, setFollowers] = useState()
-  const follow = (userId) => {
+  const {userId} = useContext(MyContext)
+  const follow = (userIds) => {
     fetch('http://192.168.1.67:3000/follow', {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId: userId, followerId: '671ce9ab7833974f431db2bb'})
+      body: JSON.stringify({ userId: userIds, followerId: userId})
     })
     .then(response => response.json())
       .then(response => console.log(response))
       .catch(error => console.log(error))
   }
-  const unFollow = (userId) => {
+  const unFollow = (userIds) => {
     fetch('http://192.168.1.67:3000/unfollow', {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId: userId, followerId: '671ce9ab7833974f431db2bb'})
+      body: JSON.stringify({ userId: userIds, followerId: userId})
       })
       .then(response => response.json())
       .then(response => console.log(response))
@@ -33,9 +33,10 @@ const FriendsScreen = () => {
   }
   useEffect(() => {
   try {
-  fetch('http://192.168.1.67:3000/users/671ce9ab7833974f431db2bb')
+  fetch(`http://192.168.1.67:3000/users/${userId}`)
   .then(response => response.json())
   .then(response => setUsers(response))
+  
   } catch(error) {
     console.log(error)
   } 
@@ -44,18 +45,22 @@ const FriendsScreen = () => {
     if(users != null) {
       const followingList = users.filter(item => item.isFollowing)
       setFollowing(followingList)
+  
     }
     }, [users])
     useEffect(() => {
       if(users != null) {
         const followersList = users.filter(item => item.isFollowed)
         setFollowers(followersList)
+  
       }
+    
       }, [users])
 
   return (
-
+    //container
     <View style={styles.container}>
+  
       <View style={styles.containers}>
       <Text style={styles.text}>Following</Text>
       <FlatList 
@@ -68,13 +73,13 @@ const FriendsScreen = () => {
                 <View style={styles.nameandfollowing}>
                 <Text style={styles.text}>{item.name}   </Text>
                 <Pressable onPress={() => {
-                if(item.isFollowed == true) {
+                if(item.isFollowing == true) {
                   unFollow(item._id)
                 } else{
                   follow(item._id)
                 }
               }}>
-                <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
+                <Text style={styles.text2}>{item.isFollowing == true ? 'Following' : 'Follow'}{item.isFollowed}</Text>
               </Pressable>
               </View>
               </View>
@@ -96,12 +101,12 @@ const FriendsScreen = () => {
         <Text style={styles.text}>{item.name}   </Text>
         <Pressable onPress={() => {
         if(item.isFollowed == true) {
-          unFollow(item._id)
+          unFollow(item._id, userId)
         } else{
-          follow(item._id)
+          follow(item._id, userId)
         }
       }}>
-        <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
+        <Text style={styles.text2}>{item.isFollowing ? 'Following' : 'Follow'}</Text>
       </Pressable>
       </View>
       </View>
@@ -127,7 +132,7 @@ const FriendsScreen = () => {
           follow(item._id)
         }
       }}>
-        <Text style={styles.text2}>{item.isFollowed ? 'Following' : 'Follow'}</Text>
+        <Text style={styles.text2}>{item.isFollowing ? 'Following' : 'Follow'}</Text>
       </Pressable>
       </View>
       </View>

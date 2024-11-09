@@ -1,7 +1,6 @@
 import { View, Text , StyleSheet, TextInput, Button, Pressable, Image} from 'react-native'
 import React, {useContext, useEffect, useState} from 'react'
 import * as ImagePicker from 'expo-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MyContext } from '../MyContext';
 
 const AddPost = ({navigation}) => {
@@ -17,18 +16,12 @@ const AddPost = ({navigation}) => {
       aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       setImageMimeType(result.assets[0].mimeType)
-
-      console.log(image)
-     
-    }
+      }
   }
-  const uploadImage = async () => {
+  const createPostWithImage = async () => {
    
     const formData = new FormData();
     formData.append('image', {
@@ -39,8 +32,6 @@ const AddPost = ({navigation}) => {
     formData.append('postData', 
       JSON.stringify({ author: userId, text: `${text}`, likes: 0, date: Date.now()  })
     )
-    console.log(formData)
-    console.log(formData._parts)
     try {
       fetch('http://192.168.1.67:3000/post', {
       method: 'POST',
@@ -54,10 +45,10 @@ const AddPost = ({navigation}) => {
     setImage(null)
     setText('')
   } catch(error) {
-    console.error('Error uploading image:', error);
+    alert('Error Adding Post');
   }
   };
-  const createPost = async () => {
+  const createPostWithOutImage = async () => {
     
     try {
       await fetch('http:192.168.1.67:3000/post/withoutImage', {
@@ -71,12 +62,10 @@ const AddPost = ({navigation}) => {
       alert('Post Added Successfully')
       setText('')
     } catch(error) {
-      console.log(error)
+      alert('Error Adding Post')
     }
-  
-
-    navigation.navigate('Home')
   }
+  
   return (
     <View style={styles.container}>
       <TextInput 
@@ -89,13 +78,13 @@ const AddPost = ({navigation}) => {
       />
       { image != null ? <Image style={styles.image2} source={{ uri: image }}/> 
         : 
-        <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add An image</Text><Image style={styles.image} source={require('../assets/imageicon.png')}/></Pressable>
+        <Pressable style={styles.pressable} onPress={() => pickImage()}><Text style={styles.text}>Add an Image</Text><Image style={styles.image} source={require('../assets/imageicon.png')}/></Pressable>
       }
       <Button title='Add Post' onPress={() => { 
         if(image == null) {
-          createPost()
+          createPostWithOutImage()
         } else {
-          uploadImage()
+          createPostWithImage()
         }
       }
       }/>
@@ -111,25 +100,26 @@ const styles = StyleSheet.create({
     },
     textinput: {
       borderWidth: 1,
-      width: 250,
-      height: 150,
+      width: '58%',
+      height: '20%',
       textAlign: 'center',
       fontSize: 18
     },
     image: {
-      height: 50,
-      width: 50
+      height: '100%',
+      width:  '25%'
     },
     image2: {
-      height: 250,
-      width: 250
+      height: '31%',
+      width: '58%'
     },
     pressable: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,
-      width: 250
+      width: '58%',
+      height: '6.5%'
     },
     text: {
       fontSize: 18

@@ -1,76 +1,55 @@
-import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList } from 'react-native'
+import { View, Text, StyleSheet, useWindowDimensions, StatusBar, Image, Pressable, ActivityIndicator, FlatList, ScrollView } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import Posts from './Posts'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { MyContext } from '../MyContext'
 
 const OthersProfileScreen = ({navigation}) => {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const {userId, setUserId} = useContext(MyContext)
-  const {selectedUserId, setSelelectedUserId} = useContext(MyContext)
-  useEffect(() => {
-    const check = async () => {
-    try {
-    fetch(`http://192.168.1.67:3000/${selectedUserId}`) 
-    .then(response => response.json())
-    .then(response => setUserPosts(response))
-    .catch(err => console.log(err))  
-    console.log(userPosts)
+  const {selectedUserId} = useContext(MyContext)
+ 
 
-    fetch(`http://192.168.1.67:3000/user/${selectedUserId}`) 
-    .then(response => response.json())
-    .then(response => setUser(response))
-    .catch(err => console.log(err))  
-    console.log(user)
-    console.log(userPosts)
+  const fetchUserPosts = async () => { 
+    try {
+    const response2 = await fetch(`http://192.168.1.67:3000/user/${selectedUserId}`) 
+    const data2 = await response2.json()
+    setUser(data2) 
+
+    const response = await fetch(`http://192.168.1.67:3000/${selectedUserId}`) 
+    const data = await response.json()
+    setUserPosts(data)
+    
     } catch (error) {
       console.log(error)
     } finally {
-      console.log(userPosts)
+      setIsLoading(false)
     }
+
     }
-    check() 
-    
-    
-  }, [userId])
+ 
   useEffect(() => {
-    if(user != null){
-      setTimeout(() =>{
-        setIsLoading(false)
-      }, 400)
-      
-    }
-  })
-  if (isLoading == true) {
+    fetchUserPosts()
+  }, [userPosts])
+  const HeaderComponent = () => {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  } else {
-  return (
-    <SafeAreaView>
-    <StatusBar  backgroundColor='black'/>
-    <FlatList data={userPosts} renderItem={({item}) =>(
-    <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} date={item.date} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} isLiked={item.isLiked} UserId={user._id}/>
-    )}
-    keyExtractor={item => item._id} 
-    ListHeaderComponent={() => (
       <View>
       <View style={styles.mainProfile}>
-      <View>
+      <View style={styles.imageContainer}>
       <Image style={styles.image} source={{uri: user.profilePicture}}/>
       </View>
       <View style={styles.container}>
-      <Text style={styles.text}>{user.name}</Text>
+      <Text style={{fontSize: 32, fontWeight: '500'}}>{user.name}</Text>
       <View style={styles.profileOptions}>
+        
         <Pressable style={styles.pressable} onPress={() => {
           navigation.navigate('AddPost')
-        }}><Text style={styles.text2}>+ Add Post</Text></Pressable>
+        }}>
+          <Text style={styles.text2}>+ Add Post</Text>
+       
+        </Pressable>
         <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
+        <Pressable style={styles.pressable} onPress={() => signOut()}><Text style={styles.text2}>Sign Out</Text></Pressable>
     </View>
       </View>
     </View>
@@ -90,19 +69,39 @@ const OthersProfileScreen = ({navigation}) => {
       </View>
       </View>
     </View>
+    )
+  }
+  if (isLoading == true) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  } 
+  return (
+    <ScrollView>
+    <StatusBar  backgroundColor='black'/>
+    {HeaderComponent()}
+    {userPosts.map((item) => 
+      <>
+      <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
+       
+       </>
     )}
-    />
-    </SafeAreaView>
+    </ScrollView>
   )
 }
-}
+
 const styles = StyleSheet.create({
   container: {
-    marginTop: 6,
-    gap: 6
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    gap: 6,
+    
   },
   mainProfile: {
-    flexDirection: 'row',
+  
     gap: 15,
     marginTop: 15,
     marginLeft: 5,
@@ -122,31 +121,35 @@ const styles = StyleSheet.create({
   },
   image: {
     borderWidth: 1,
-   
     borderRadius: 100,
-    height: 80,
-    width: 80,
+    height: 150,
+    width: 150,
   
   },
   profileOptions: {
     flexDirection: 'row',
+    width: '100%',
     justifyContent: 'center',
-    gap: 25
+    gap: 40,
+    flexWrap: 'wrap',
+    flex: 1,
   },
+  
   text: {
     fontSize: 24,
     fontWeight: 'bold'
   },
   pressable: {
-    backgroundColor: 'blue',
-    borderRadius: 10,
-    height: 40,
-    width: 120,
+    backgroundColor: '#0388fc',
+    borderRadius: 6,
+    height: '150%',
+    paddingLeft: 5,
+    paddingRight: 5,
     justifyContent: 'center',
-    alignItems: 'center'
+    
   },
   text2: {
-    fontSize: 22,
+    fontSize: 24,
     color: 'white'
   },
  
@@ -157,6 +160,8 @@ const styles = StyleSheet.create({
   text3: {
     fontSize: 24
   },
-  
+  imageContainer: {
+    alignItems: 'center'
+  }
 })
 export default OthersProfileScreen

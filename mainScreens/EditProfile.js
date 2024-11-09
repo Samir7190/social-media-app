@@ -1,14 +1,33 @@
-import { View, Text, StyleSheet, Image, Button, TextInput, Pressable } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { View, Text, StyleSheet, Image, Button, TextInput, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { MyContext } from '../MyContext';
 
 const EditProfile = () => {
-  const [userName, setUserName] = useState('Samir Pokharel')
+  const [user, setUser] = useState()
+  const [userName, setUserName] = useState('')
+  const [userImage, setUserImage] = useState()
   const [image, setImage] = useState(null);
   const [imageMimeType, setImageMimeType] = useState(null)
   const [disabledState, setDisableState] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const {userId} = useContext(MyContext)
+  useEffect(() => {
+    const fetchUser = async () => {
+    try {
+    const response = await fetch(`http://192.168.1.67:3000/user/${userId}`)
+    const data = await response.json()
+    setUser(data)
+    setUserName(data.name)
+    setUserImage(data.profilePicture)
+    } catch(error) {
+        console.log(error)
+    } finally {
+        setIsLoading(false)
+    }
+}
+    fetchUser()
+  }, [])
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -23,10 +42,7 @@ const EditProfile = () => {
         setImage(result.assets[0].uri);
         setImageMimeType(result.assets[0].mimeType)
         setDisableState(false)
-      console.log(image)
-      
-     
-    }
+      }
   }
   const updatePicture = () => {
     const formData = new FormData();
@@ -65,6 +81,14 @@ const EditProfile = () => {
         console.log(error)
     }  
 }
+  if(isLoading) {
+    return (
+        <SafeAreaView style={styles.loading}>
+            <ActivityIndicator size='large' color='green' />
+            <Text>Loading...</Text>
+        </SafeAreaView>
+    )
+  }
   return (
     <View style={styles.container}>
         <View style={styles.profilePicture}>
@@ -74,7 +98,7 @@ const EditProfile = () => {
                     pickImage()
                 }}/>
             </View>
-            <Image style={styles.image} source={{uri: image}}/>
+            <Image style={styles.image} source={{uri: image ? image : userImage}}/>
         </View>
         <View style={styles.buttonContainer}>
         <Button title='Update Profile Picture' disabled={disabledState} onPress={() => updatePicture()}/>
@@ -142,6 +166,10 @@ const styles = StyleSheet.create({
     },
     input: {
         flexDirection: 'row'
+    },
+    loading: {
+        flex: 1,
+
     }
 })
 export default EditProfile
