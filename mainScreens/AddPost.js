@@ -49,7 +49,9 @@ const AddPost = ({navigation}) => {
   }
   };
   const createPostWithOutImage = async () => {
-    
+    if(text == '') {
+      alert('Post is empty')
+    } else {
     try {
       await fetch('http:192.168.1.67:3000/post/withoutImage', {
         method: 'POST',
@@ -64,6 +66,7 @@ const AddPost = ({navigation}) => {
     } catch(error) {
       alert('Error Adding Post')
     }
+  }
   }
   
   return (
