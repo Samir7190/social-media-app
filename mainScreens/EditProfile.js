@@ -10,16 +10,24 @@ const EditProfile = () => {
   const [image, setImage] = useState(null);
   const [imageMimeType, setImageMimeType] = useState(null)
   const [disabledState, setDisableState] = useState(true)
+  const [disabledState2, setDisableState2] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const {userId} = useContext(MyContext)
   useEffect(() => {
     const fetchUser = async () => {
     try {
-    const response = await fetch(`http://192.168.1.67:3000/user/${userId}`)
+    const response = await fetch(`http://192.168.1.67:3000/user/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: userId }),
+      
+      })
     const data = await response.json()
-    setUser(data)
-    setUserName(data.name)
-    setUserImage(data.profilePicture)
+    setUser(data.user)
+    setUserName(data.user.name)
+    setUserImage(data.user.profilePicture)
     } catch(error) {
         console.log(error)
     } finally {
@@ -67,6 +75,10 @@ const EditProfile = () => {
         alert(error) 
     }
   }
+  const handleTextChange = (input) => {
+    setUserName(input)
+    setDisableState2(false)
+  }
   const changeName = () => {
     try {
     fetch(`http://192.168.1.67:3000/update`, {
@@ -74,7 +86,7 @@ const EditProfile = () => {
         headers: {
             'Content-type': 'application/json'
         },
-        body: JSON.stringify({ id: '671fa284d3eb2c5d57336251', name: userName})
+        body: JSON.stringify({ id: userId, name: userName})
     })
     alert('Successfully Updated')
     } catch(error) {
@@ -110,9 +122,9 @@ const EditProfile = () => {
             <TextInput
                 style={styles.textInput} 
                 value={userName}
-                onChangeText={setUserName}
+                onChangeText={handleTextChange}
             />
-            <Button title='Update'  onPress={() => changeName()}/>
+            <Button title='Update Name'  onPress={() => changeName()} disabled={disabledState2}/>
             </View>
             
         </View>

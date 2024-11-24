@@ -7,16 +7,31 @@ const OthersProfileScreen = ({navigation}) => {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isFollowing, setIsFollowing] = useState()
   const {selectedUserId} = useContext(MyContext)
- 
+  const {userId, follow, unFollow} = useContext(MyContext)
 
   const fetchUserPosts = async () => { 
     try {
-    const response2 = await fetch(`http://192.168.1.67:3000/user/${selectedUserId}`) 
-    const data2 = await response2.json()
-    setUser(data2) 
-
-    const response = await fetch(`http://192.168.1.67:3000/${selectedUserId}`) 
+    const response2 = await fetch(`http://192.168.1.67:3000/user/${selectedUserId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({ id: userId }),
+    
+    }) 
+    const data2 = await response2.json() 
+    setUser(data2.user) 
+    setIsFollowing(data2.isFollowed)
+    const response = await fetch(`http://192.168.1.67:3000/${selectedUserId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: userId }),
+    
+    }) 
     const data = await response.json()
     setUserPosts(data)
     
@@ -41,15 +56,13 @@ const OthersProfileScreen = ({navigation}) => {
       <View style={styles.container}>
       <Text style={{fontSize: 32, fontWeight: '500'}}>{user.name}</Text>
       <View style={styles.profileOptions}>
-        
         <Pressable style={styles.pressable} onPress={() => {
-          navigation.navigate('AddPost')
-        }}>
-          <Text style={styles.text2}>+ Add Post</Text>
-       
-        </Pressable>
-        <Pressable style={styles.pressable} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.text2}>Edit Profile</Text></Pressable>
-        <Pressable style={styles.pressable} onPress={() => signOut()}><Text style={styles.text2}>Sign Out</Text></Pressable>
+          if(isFollowing == true) {
+            unFollow(user._id, userId)
+          } else {
+            follow(user._id, userId)
+          }
+        }}><Text style={styles.text2}>{isFollowing == true ? 'Following' : 'Follow'}</Text></Pressable>
     </View>
       </View>
     </View>
@@ -60,11 +73,11 @@ const OthersProfileScreen = ({navigation}) => {
       <Text style={styles.text3}>{user.post.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
-      <Text style={styles.text}>Followers</Text>
+      <Text style={styles.text}>Following</Text>
       <Text style={styles.text3}>{user.following.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
-      <Text style={styles.text}>Following</Text>
+      <Text style={styles.text}>Followers</Text>
       <Text style={styles.text3}>{user.followers.length}</Text>
       </View>
       </View>
@@ -79,15 +92,16 @@ const OthersProfileScreen = ({navigation}) => {
     );
   } 
   return (
-    <ScrollView>
+    <ScrollView style={{flex: 1,}}>
     <StatusBar  backgroundColor='black'/>
     {HeaderComponent()}
     {userPosts.map((item) => 
-      <>
-      <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
+      <View key={item._id}>
+      <Posts hideFollow={false} profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={isFollowing} UserId={user._id}/>
        
-       </>
+       </View>
     )}
+     <View style={{height: 55}}></View>
     </ScrollView>
   )
 }

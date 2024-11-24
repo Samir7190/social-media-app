@@ -8,6 +8,7 @@ import AddPost from './AddPost'
 import Comment from './Comment'
 import OthersProfileScreen from './OthersProfileScreen'
 import EditProfile from './EditProfile'
+import ProfileScreen from './ProfileScreen'
 const Stack = createNativeStackNavigator()
 
 const StackedScreens = () => {
@@ -20,6 +21,7 @@ const StackedScreens = () => {
             <Stack.Screen name='Comment' component={Comment} />
             <Stack.Screen name='OthersProfileScreen' component={OthersProfileScreen} />
             <Stack.Screen name='EditProfile' component={EditProfile} />
+            <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
         </Stack.Navigator>
   
   )

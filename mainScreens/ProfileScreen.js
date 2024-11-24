@@ -13,22 +13,30 @@ const ProfileScreen = ({navigation}) => {
   const {token, setToken} = useContext(MyContext)
   const {userId} = useContext(MyContext)
   const windowWidth = useWindowDimensions().width
-  const fetchUser = async () => {
-    try{
-      const response2 = await fetch(`http://192.168.1.67:3000/user/${userId}`) 
-      const data2 = await response2.json()
-      setUser(data2) 
-    } catch(error) {
-      console.log(error)
-    }
-  }
-
   const fetchUserPosts = async () => { 
     try {
-    const response = await fetch(`http://192.168.1.67:3000/${userId}`) 
+    const response = await fetch(`http://192.168.1.67:3000/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: userId }),
+    
+    }) 
     const data = await response.json()
     setUserPosts(data)
     
+    const response2 = await fetch(`http://192.168.1.67:3000/user/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: userId }),
+    
+    }) 
+    const data2 = await response2.json()
+    setUser(data2.user) 
+
     } catch (error) {
       console.log(error)
     } finally {
@@ -36,9 +44,7 @@ const ProfileScreen = ({navigation}) => {
     }
 
     }
-  useEffect(() =>{
-    fetchUser()
-  }, [])
+ 
   useEffect(() => {
     fetchUserPosts()
   }, [userPosts])
@@ -80,11 +86,11 @@ const ProfileScreen = ({navigation}) => {
       <Text style={styles.text3}>{user.post.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
-      <Text style={styles.text}>Followers</Text>
+      <Text style={styles.text}>Following</Text>
       <Text style={styles.text3}>{user.following.length}</Text>
       </View>
       <View style={styles.displayNumbers}>
-      <Text style={styles.text}>Following</Text>
+      <Text style={styles.text}>Followers</Text>
       <Text style={styles.text3}>{user.followers.length}</Text>
       </View>
       </View>
@@ -104,7 +110,7 @@ const ProfileScreen = ({navigation}) => {
     {HeaderComponent()}
     {userPosts.map((item) => 
       <View key={item._id}> 
-      <Posts profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
+      <Posts hideFollow={true} profilePicture={user.profilePicture } name={user.name} textpost={item.text} likeNumber={item.likes} postId={item._id} navigation={navigation} imageUrl={item.imageUrl} date={item.date} isLiked={item.isLiked} isFollowed={item.isFollowed} UserId={user._id}/>
        
        </View>
     )}

@@ -9,7 +9,7 @@ import Animated, {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
-const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, UserId, date, like, setLiked}) => {
+const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, navigation, isFollowed, isLiked, UserId, date, hideFollow}) => {
   const {selectedPostId, setSelectedPostId} = useContext(MyContext)
   const {selectedUserId, setSelectedUserId} = useContext(MyContext)
   const {userId} = useContext(MyContext)
@@ -129,6 +129,7 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
         <Text style={styles.text} onPress={() => goToProfile()}>{name} </Text>
         <Text style={styles.text}> · </Text>
         <Text style={{fontSize: 20, color: 'grey'}}> {postDate} </Text>
+        {hideFollow == false && <>
         <Text style={styles.text}> · </Text>
       
         <Pressable onPress={() => { 
@@ -140,7 +141,8 @@ const Posts = ({profilePicture, name, textpost, imageUrl, likeNumber, postId, na
       }}>
         <Text style={styles.text2}> {isFollowed ? 'Following' : 'Follow'}</Text>
       </Pressable>
-    
+      </>
+    }
         
         
       </View>

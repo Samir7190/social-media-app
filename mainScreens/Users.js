@@ -42,8 +42,10 @@ const Users = () => {
   return (
     <FlatList 
         data={users}
+        
         renderItem={({item}) => (
-      <View style={styles.headers}>
+      
+      <View style={styles.headers} >
       <View style={styles.header}>
         <Image style={styles.image} source={{ uri: item.profilePicture }} />
         <View style={styles.nameandfollowing}>
@@ -61,8 +63,9 @@ const Users = () => {
       </View>
       
       </View>
-        )}
       
+        )}
+        keyExtractor={item => item._id}
       />
     
 
@@ -80,7 +83,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
     flexWrap: 'wrap',
-    padding: 5
+    padding: 5,
+    
   },
   image: {
     height: 60,

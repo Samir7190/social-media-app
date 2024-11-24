@@ -29,7 +29,7 @@ const Followers = () => {
     <FlatList 
         data={followers}
         renderItem={({item}) => (
-      <View style={styles.headers}>
+      <View style={styles.headers} >
       <View style={styles.header}>
         <Image style={styles.image} source={{ uri: item.profilePicture }} />
         <View style={styles.nameandfollowing}>
@@ -48,7 +48,7 @@ const Followers = () => {
       
       </View>
         )}
-      
+        keyExtractor={item => item._id}
       />
     
   )

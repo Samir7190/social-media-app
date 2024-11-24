@@ -11,7 +11,6 @@ import FriendsScreen from './mainScreens/FriendsScreen'
 import { MyContext } from './MyContext'
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AddPost from './mainScreens/AddPost'
-import FriendsNavigationScreen from './mainScreens/FriendsNavigationScreen'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -37,7 +36,7 @@ const AppNavigator = () => {
             iconName = 'home';
           } else if (route.name === 'Profile') {
             iconName = 'account';
-          } else if (route.name === 'Users') {
+          } else if (route.name === 'User') {
             iconName = 'account-group'
           } else if (route.name === 'AddPost') {
             iconName = 'plus-circle-outline'
@@ -53,8 +52,7 @@ const AppNavigator = () => {
        <Tab.Screen name='home' component={StackedScreens} />
        <Tab.Screen name='AddPost' component={AddPost} />
        <Tab.Screen name='Profile' component={ProfileScreen} />
-       <Tab.Screen name='Users' component={FriendsScreen} />
-       <Tab.Screen name='FriendsNavigationScreen' component={FriendsNavigationScreen}/>
+       <Tab.Screen name='User' component={FriendsScreen} />
        </Tab.Navigator>
        : 
        <Stack.Navigator screenOptions={{ headerShown: true}}>

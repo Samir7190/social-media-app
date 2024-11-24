@@ -25,6 +25,22 @@ const Comment = () => {
   }
   return (
     <SafeAreaView style={styles.mainContainer}>
+        
+      
+      <FlatList 
+        data={comments}
+        renderItem={({item}) => (
+        
+          <View style={styles.container}>
+            
+          <Image style={styles.image} source={{uri: item.commenter.profilePicture}}/>
+          <View style={styles.comment}>
+          <Text style={{fontSize: 18, fontWeight: 'bold'}}>{item.commenter.name}</Text>
+          <Text style={{fontSize: 18}}>{item.comment}</Text>
+          </View>
+        </View>
+        )}
+        ListHeaderComponent={
         <View style={styles.addComment}>
         <TextInput style={styles.textInput} placeholder='Write a comment' value={userComment} onChangeText={setUserComment}/>
         <Pressable style={styles.addCommentButton}
@@ -40,19 +56,7 @@ const Comment = () => {
           <Text style={styles.commentText}>Add</Text>
           </Pressable>
       </View>
-      <FlatList 
-        data={comments}
-        renderItem={({item}) => (
-        
-          <View style={styles.container}>
-            
-          <Image style={styles.image} source={{uri: item.commenter.profilePicture}}/>
-          <View style={styles.comment}>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>{item.commenter.name}</Text>
-          <Text style={{fontSize: 18}}>{item.comment}</Text>
-          </View>
-        </View>
-        )}
+        }
         ListFooterComponent={<View style={{ height: 45 }} />}
       />
       
@@ -85,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 50,
     textAlign: 'center',
-    textAlignVertical: 'center',
+    
     fontSize: 18,
     backgroundColor: 'white',
     width: 350
