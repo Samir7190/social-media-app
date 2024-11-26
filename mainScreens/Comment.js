@@ -42,7 +42,7 @@ const Comment = () => {
         )}
         ListHeaderComponent={
         <View style={styles.addComment}>
-        <TextInput style={styles.textInput} placeholder='Write a comment' value={userComment} onChangeText={setUserComment}/>
+        <TextInput style={styles.textInput} placeholder='Write a comment' value={userComment} onChangeText={setUserComment} multiline={true}/>
         <Pressable style={styles.addCommentButton}
         onPress={() => {
           if(userComment == '') {
